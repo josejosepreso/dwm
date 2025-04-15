@@ -1789,10 +1789,10 @@ tagswapmon(const Arg *arg)
 	    	return;
 
 	view( &(Arg) {
-	    .ui = 1 << (int) ( log(selmon == mons ?
-				   mons->next->tagset[mons->next->seltags]
-				   : mons->tagset[mons->seltags]) / log(2)
-			       )
+	    .ui = 1 << (int) ( log2(selmon == mons ?
+				mons->next->tagset[mons->next->seltags]
+				: mons->tagset[mons->seltags])
+		    )
 	  });
 }
 
