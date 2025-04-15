@@ -1780,19 +1780,20 @@ tagmon(const Arg *arg)
 	sendmon(selmon->sel, dirtomon(arg->i));
 }
 
+#include <math.h>
+
 void
 tagswapmon(const Arg *arg)
 {
-    	/*
 	if (!mons->next)
 	    	return;
 
- 	unsigned int i = selmon == mons
-	    ? mons->next->tagset[mons->next->seltags]
-	    : mons->tagset[mons->seltags];
-
-	view( &(Arg) { .ui = 1 << --i } );
-	*/
+	view( &(Arg) {
+	    .ui = 1 << (int) ( log(selmon == mons ?
+				   mons->next->tagset[mons->next->seltags]
+				   : mons->tagset[mons->seltags]) / log(2)
+			       )
+	  });
 }
 
 void

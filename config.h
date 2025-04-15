@@ -11,7 +11,8 @@ static const char col_gray1[]       = "#000000";
 static const char col_gray2[]       = "#444444";
 static const char col_gray3[]       = "#bbbbbb";
 static const char col_gray4[]       = "#eeeeee";
-static const char col_cyan[]        = "#010040";
+static const char col_cyan[]        = "#986c5b";
+// static const char col_cyan[]        = "#010040";
 
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
@@ -59,31 +60,24 @@ static const Rule rules[] = {
 };
 
 static const char *dmenucmd[] = { "dmenu_run", "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
-static const char *termcmd[]  = { "alacritty" , NULL };
+static const char *termcmd[]  = { "urxvt" , NULL };
 
-static const char *ncmpcpp[] = { "alacritty", "-e", "ncmpcpp", NULL };
+static const char *ncmpcpp[] = { "st", "-e", "ncmpcpp", NULL };
 
 static const Key keys[] = {
-	{ MODKEY|ShiftMask,             XK_m,     spawn, 	SHCMD("bookmarks") },
-	{ MODKEY,             		XK_v,     music_tag, 	{0} },
-	{ MODKEY,             		XK_c,     spawn, 	SHCMD("alacritty -e ranger") },
-	
-	/* moc */
-	{ MODKEY,                       XK_e,     spawn, 	SHCMD("emacs") },
-
-	/* ss, PrtSc button */
-	{ 0,				XK_Print, spawn, 	SHCMD("flameshot gui") },
-
-	{ 0,				XF86XK_AudioLowerVolume, spawn, SHCMD("mpc volume -5") },
-	{ 0,				XF86XK_AudioRaiseVolume, spawn, SHCMD("mpc volume +5") },
-
-	/* Media keys */
-	{ 0,				XF86XK_AudioPlay, spawn, SHCMD("mpc toggle") },
-	{ 0, 				XF86XK_AudioNext, spawn, SHCMD("mpc next") },
-	{ 0, 				XF86XK_AudioPrev, spawn, SHCMD("mpc prev") },
-	
-	{ 0, 				XF86XK_MonBrightnessUp, spawn, SHCMD("/usr/bin/brightnessctl set +3%") },
-	{ 0, 				XF86XK_MonBrightnessDown, spawn, SHCMD("/usr/bin/brightnessctl set 3%-") },
+	{ MODKEY|ShiftMask,             XK_m,     zoom,            {0} },
+	{ MODKEY,             		XK_v,     music_tag, 	   {0} },
+	{ MODKEY,             		XK_c,     spawn, 	   SHCMD("urxvt -e ranger") },
+	{ MODKEY,                       XK_e,     spawn, 	   SHCMD("emacs") },
+	{ 0,				XK_Print, spawn, 	   SHCMD("flameshot gui") },
+	{ 0,				XF86XK_AudioLowerVolume,   spawn, SHCMD("mpc volume -5") },
+	{ 0,				XF86XK_AudioRaiseVolume,   spawn, SHCMD("mpc volume +5") },
+	{ 0,				XF86XK_AudioPlay, spawn,   SHCMD("mpc toggle") },
+	{ 0, 				XF86XK_AudioNext, spawn,   SHCMD("mpc next") },
+	{ 0, 				XF86XK_AudioPrev, spawn,   SHCMD("mpc prev") },
+	{ 0, 				XF86XK_MonBrightnessUp,    spawn, SHCMD("/usr/bin/brightnessctl set +3%") },
+	{ 0, 				XF86XK_MonBrightnessDown,  spawn, SHCMD("/usr/bin/brightnessctl set 3%-") },
+	{ MODKEY|ShiftMask,             XK_d,      spawn,	   SHCMD("bookmarks") },
 
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
