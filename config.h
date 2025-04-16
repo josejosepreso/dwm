@@ -2,6 +2,7 @@
 
 static const unsigned int borderpx  = 2;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
+static const int swallowfloating    = 0;
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const char *fonts[]          = { "Iosevka:style=Bold:size=9" ,"0xProto Nerd Font Mono:size=12" };
@@ -12,7 +13,6 @@ static const char col_gray2[]       = "#444444";
 static const char col_gray3[]       = "#bbbbbb";
 static const char col_gray4[]       = "#eeeeee";
 static const char col_cyan[]        = "#986c5b";
-// static const char col_cyan[]        = "#010040";
 
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
@@ -21,7 +21,7 @@ static const char *colors[][3]      = {
 };
 
 /* tagging */
-static const char *tags[] = { "", "", "󰈙", "", "", "", "", "", "" };
+static const char *tags[] = { "", "", "󰈙", "", "", "", "", "", "" };
 
 /* layout(s) */
 static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
@@ -54,9 +54,13 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class      instance    title       tags mask     isfloating   monitor */
-	{ "qutebrowser",  NULL,       NULL,       1 << 8,	    0,           -1 },
-	{ "mpv",  NULL,       NULL,       1 << 7,	    0,           -1 },
+    	/* class     	 instance    title        tags mask   isfloating  isterminal  noswallow  monitor */
+	{ "qutebrowser", NULL,       NULL,        1 << 8,     0,          0,	      0,   	 -1 },
+	{ "LibreWolf",   NULL,       NULL,        1 << 8,     0,          0,   	      0,     	 -1 },
+	{ "mpv",  	 NULL,       NULL,        1 << 7,     0,          0,          0,	 -1 },
+	{ "urxvt",  	 NULL,       NULL,        0,	      0,          1,   	      0,	 -1 },
+	{ "URxvt",  	 NULL,       NULL,        0,	      0,          1,   	      0,	 -1 },
+	{ "Alacritty",   NULL,       NULL,        0,	      0,          1,   	      0,	 -1 },
 };
 
 static const char *dmenucmd[] = { "dmenu_run", "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
