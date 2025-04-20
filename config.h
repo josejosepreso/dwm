@@ -70,8 +70,10 @@ static const char *ncmpcpp[] = { "st", "-e", "ncmpcpp", NULL };
 
 static const Key keys[] = {
 	/* modifier                     key        			function        argument */
+	{ MODKEY,                       XK_bracketright,    		nextoccupied,	{ .i = +1 } },
+	{ MODKEY,                       XK_bracketleft,    		nextoccupied,	{ .i = -1 } },
 	{ MODKEY|ShiftMask,             XK_m,     			zoom,           {0} },
-	{ MODKEY,             		XK_v,     			music_tag, 	{0} },
+	{ MODKEY,             		XK_v,     			musictag 	},
 	{ MODKEY,             		XK_c,     			spawn, 	   	SHCMD("urxvt -e ranger") },
 	{ MODKEY,                       XK_e,     			spawn, 	   	SHCMD("emacs") },
 	{ 0,				XK_Print, 			spawn, 	   	SHCMD("flameshot gui") },
@@ -104,7 +106,7 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_0,      			tag,            {.ui = ~0 } },
 	{ MODKEY,                       XK_comma,  			focusmon,       {.i = -1 } },
 	{ MODKEY,                       XK_period, 			focusmon,       {.i = +1 } },
-	{ MODKEY,                       XK_Tab,    			tagswapmon,	   {0} },
+	{ MODKEY,                       XK_Tab,    			tagswapmon	},
 	{ MODKEY|ShiftMask,             XK_comma,  			tagmon,         {.i = -1 } },
       	{ MODKEY|ShiftMask,             XK_period, 			tagmon,         {.i = +1 } },
 	TAGKEYS(                        XK_1,      			                0)

@@ -158,7 +158,9 @@ struct Clientlist {
 };
 
 /* function declarations */
-static void music_tag(const Arg *arg);
+static void nextoccupied(const Arg *arg);
+static void musictag();
+static void tagswapmon();
 static void applyrules(Client *c);
 static int applysizehints(Client *c, int *x, int *y, int *w, int *h, int interact);
 static void arrange(Monitor *m);
@@ -228,7 +230,6 @@ static void spawn(const Arg *arg);
 static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
 static void tile(Monitor *m);
-static void tagswapmon(const Arg *arg);
 static void togglebar(const Arg *arg);
 static void togglefloating(const Arg *arg);
 static void toggletag(const Arg *arg);
@@ -1854,22 +1855,6 @@ tagmon(const Arg *arg)
 	sendmon(selmon->sel, dirtomon(arg->i));
 }
 
-#include <math.h>
-
-void
-tagswapmon(const Arg *arg)
-{
-	if (!mons->next)
-	    	return;
-
-	view( &(Arg) {
-	    .ui = 1 << (int) ( log2(selmon == mons ?
-				mons->next->tagset[mons->next->seltags]
-				: mons->tagset[mons->seltags])
-		    )
-	  });
-}
-
 void
 tile(Monitor *m)
 {
@@ -2513,14 +2498,47 @@ zoom(const Arg *arg)
 }
 
 void
-music_tag(const Arg *arg)
+musictag()
 {
     	view( &(Arg) { .ui = 1 << 6 } );
 
-	if (0 == system("pidof -x ncmpcpp > /dev/null"))
+	if (system("pidof -x ncmpcpp > /dev/null") != 0)
+		spawn( &(Arg) { .v = ncmpcpp } );
+}
+
+unsigned int
+l2(int pow)
+{
+    	unsigned int exp;
+
+	for (exp = 0; pow >>= 1; exp++);
+
+	return exp;
+}
+
+void
+tagswapmon()
+{
+	if (!mons->next)
 	    	return;
 
-	spawn( &(Arg) { .v = ncmpcpp } );
+	view( &(Arg) { .ui = 1 << l2( selmon == mons
+		    			? mons->next->tagset[mons->next->seltags]
+					: mons->tagset[mons->seltags] )
+		}
+	);
+}
+
+void
+nextoccupied(const Arg *arg)
+{
+	unsigned int tag = l2(selmon->tagset[selmon->seltags]);
+
+	tag += arg->i;
+
+	if (tag == -1) tag = 8;
+
+	view( &(Arg) { .ui = 1 << tag % 9 } );
 }
 
 int
