@@ -2529,16 +2529,39 @@ tagswapmon()
 	);
 }
 
+/* TODO: optimise */
 void
 nextoccupied(const Arg *arg)
 {
-	unsigned int tag = l2(selmon->tagset[selmon->seltags]);
+	if (cl->clients == NULL)
+    		return;
 
-	tag += arg->i;
+	Client *c;
+	unsigned int curr = selmon->tagset[selmon->seltags], diff = 256, c_tag;
+	unsigned int next = curr;
 
-	if (tag == -1) tag = 8;
+	if (arg->i == -1) {
+		for (c = cl->clients; c != NULL; c = c->next) {
+		    	c_tag = c->tags;
+	    		if (c_tag != curr && curr - c_tag < diff) {
+		    		next = c_tag;
+				diff = curr - c_tag;
+			}
+		}
+	} else {
+		for (c = cl->clients; c != NULL; c = c->next) {
+		    	c_tag = c->tags;
+	    		if (c_tag != curr && c_tag - curr < diff) {
+		    		next = c_tag;
+				diff = c_tag - curr;
+			}
+		}
+	}
 
-	view( &(Arg) { .ui = 1 << tag % 9 } );
+	if (next == curr)
+	    	return;
+
+	view( &(Arg) { .ui = 1 << l2(next) });
 }
 
 int
