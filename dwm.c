@@ -2498,9 +2498,9 @@ zoom(const Arg *arg)
 }
 
 void
-musictag()
+musictag(void)
 {
-    	view( &(Arg) { .ui = 1 << 6 } );
+  	view( &(Arg) { .ui = 1 << 6 } );
 
 	if (system("pidof -x ncmpcpp > /dev/null") != 0)
 		spawn( &(Arg) { .v = ncmpcpp } );
@@ -2509,7 +2509,7 @@ musictag()
 unsigned int
 l2(int pow)
 {
-    	unsigned int exp;
+  unsigned int exp;
 
 	for (exp = 0; pow >>= 1; exp++);
 
@@ -2517,49 +2517,59 @@ l2(int pow)
 }
 
 void
-tagswapmon()
+tagswapmon(void)
 {
 	if (!mons->next)
 	    	return;
 
 	view( &(Arg) { .ui = 1 << l2( selmon == mons
-		    			? mons->next->tagset[mons->next->seltags]
-					: mons->tagset[mons->seltags] )
+                              ? mons->next->tagset[mons->next->seltags]
+                              : mons->tagset[mons->seltags] )
 		}
 	);
 }
 
-/* TODO: optimise */
+int subA(int a, int b)
+{
+    	return a - b;
+}
+
+int subB(int a, int b)
+{
+    	return b - a;
+}
+
 void
 nextoccupied(const Arg *arg)
 {
-	if (cl->clients == NULL)
-    		return;
+	unsigned int curr = selmon->tagset[selmon->seltags];
+
+	if (cl->clients == NULL
+	|| (curr == 1 && arg->i == -1)
+	|| (curr == 256 && arg->i == +1))
+	    return;
 
 	Client *c;
-	unsigned int curr = selmon->tagset[selmon->seltags], diff = 256, c_tag;
-	unsigned int next = curr;
+	unsigned int diff = 256, c_tag, next = curr, d;
 
-	if (arg->i == -1) {
-		for (c = cl->clients; c != NULL; c = c->next) {
-		    	c_tag = c->tags;
-	    		if (c_tag != curr && curr - c_tag < diff) {
-		    		next = c_tag;
-				diff = curr - c_tag;
-			}
-		}
-	} else {
-		for (c = cl->clients; c != NULL; c = c->next) {
-		    	c_tag = c->tags;
-	    		if (c_tag != curr && c_tag - curr < diff) {
-		    		next = c_tag;
-				diff = c_tag - curr;
-			}
+	int (*sub)(int, int) = arg->i == -1 ? subB : subA;
+
+	for (c = cl->clients; c != NULL; c = c->next) {
+		c_tag = c->tags;
+
+	    	if (c_tag == curr)
+		    	continue;
+
+		d = sub(c_tag, curr); 
+
+		if (d < diff) {
+        		next = c_tag;
+			diff = d;
 		}
 	}
 
 	if (next == curr)
-	    	return;
+    		return;
 
 	view( &(Arg) { .ui = 1 << l2(next) });
 }

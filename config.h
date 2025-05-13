@@ -13,6 +13,7 @@ static const char col_gray2[]       = "#444444";
 static const char col_gray3[]       = "#bbbbbb";
 static const char col_gray4[]       = "#eeeeee";
 static const char col_cyan[]        = "#986c5b";
+//static const char col_cyan[]        = "#005577";
 
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
@@ -59,22 +60,25 @@ static const Rule rules[] = {
 	{ "LibreWolf",   NULL,       NULL,        1 << 8,     0,          0,   	      0,     	 -1 },
 	{ "mpv",  	 NULL,       NULL,        1 << 7,     0,          0,          0,	 -1 },
 	{ "urxvt",  	 NULL,       NULL,        0,	      0,          1,   	      0,	 -1 },
+	{ "st",  	 NULL,       NULL,        0,	      0,          1,   	      0,	 -1 },
 	{ "URxvt",  	 NULL,       NULL,        0,	      0,          1,   	      0,	 -1 },
 	{ "Alacritty",   NULL,       NULL,        0,	      0,          1,   	      0,	 -1 },
+	{ "floating",   NULL,       NULL,        0,	      1,          0,   	      1,	 -1 },
 };
 
 static const char *dmenucmd[] = { "dmenu_run", "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
-static const char *termcmd[]  = { "urxvt" , NULL };
+static const char *termcmd[]  = { "st" , NULL };
 
 static const char *ncmpcpp[] = { "st", "-e", "ncmpcpp", NULL };
 
 static const Key keys[] = {
 	/* modifier                     key        			function        argument */
+	{ MODKEY,                       XK_n,    		spawn,	SHCMD("st -c \"floating\" -g=\"120x30+500+500\" -e mplay") },
 	{ MODKEY,                       XK_bracketright,    		nextoccupied,	{ .i = +1 } },
 	{ MODKEY,                       XK_bracketleft,    		nextoccupied,	{ .i = -1 } },
 	{ MODKEY|ShiftMask,             XK_m,     			zoom,           {0} },
 	{ MODKEY,             		XK_v,     			musictag 	},
-	{ MODKEY,             		XK_c,     			spawn, 	   	SHCMD("urxvt -e ranger") },
+	{ MODKEY,             		XK_c,     			spawn, 	   	SHCMD("st -e ranger") },
 	{ MODKEY,                       XK_e,     			spawn, 	   	SHCMD("emacs") },
 	{ 0,				XK_Print, 			spawn, 	   	SHCMD("flameshot gui") },
 	{ 0,				XF86XK_AudioLowerVolume,   	spawn, 		SHCMD("mpc volume -5") },
@@ -108,7 +112,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_period, 			focusmon,       {.i = +1 } },
 	{ MODKEY,                       XK_Tab,    			tagswapmon	},
 	{ MODKEY|ShiftMask,             XK_comma,  			tagmon,         {.i = -1 } },
-      	{ MODKEY|ShiftMask,             XK_period, 			tagmon,         {.i = +1 } },
+  { MODKEY|ShiftMask,             XK_period, 			tagmon,         {.i = +1 } },
 	TAGKEYS(                        XK_1,      			                0)
 	TAGKEYS(                        XK_2,      			                1)
 	TAGKEYS(                        XK_3,      			                2)
