@@ -2538,7 +2538,7 @@ int subB(int a, int b)
 }
 
 int
-closesttag(int curr, int i)
+closesttag(int curr, int i, int rec)
 {
 	Client *c;
 	unsigned int diff = 256, c_tag, d;
@@ -2560,7 +2560,10 @@ closesttag(int curr, int i)
 		}
 	}
 
-	return next == curr ? closesttag(i == -1 ? 257 : 0, i) : next;
+	if (next == curr && rec == 1)
+		return -1;
+
+	return next == curr ? closesttag(i == -1 ? 257 : 0, i, 1) : next;
 }
 
 void
@@ -2571,7 +2574,10 @@ nextoccupied(const Arg *arg)
 	if (cl->clients == NULL)
 		return;
 
-	int next = closesttag(curr, arg->i);
+	int next = closesttag(curr, arg->i, 0);
+
+	if (next == -1)
+		return;
 
 	view( &(Arg) { .ui = 1 << l2(next) });
 }
