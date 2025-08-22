@@ -1,5 +1,7 @@
 #include <X11/XF86keysym.h>
 
+#define TERMINAL "alacritty"
+
 static const unsigned int borderpx  = 2;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int swallowfloating    = 0;
@@ -12,8 +14,10 @@ static const char col_gray1[]       = "#000000";
 static const char col_gray2[]       = "#444444";
 static const char col_gray3[]       = "#bbbbbb";
 static const char col_gray4[]       = "#eeeeee";
-static const char col_cyan[]        = "#986c5b";
+// static const char col_cyan[]        = "#986c5b";
+static const char col_cyan[]        = "#6f493a";
 //static const char col_cyan[]        = "#005577";
+// static const char col_cyan[]        = "#9e7600";
 
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
@@ -60,29 +64,34 @@ static const Rule rules[] = {
 	{ "LibreWolf",   NULL,       NULL,        1 << 8,     0,          0,   	      0,     	 -1 },
 	{ "mpv",  	 NULL,       NULL,        1 << 7,     0,          0,          0,	 -1 },
 	{ "urxvt",  	 NULL,       NULL,        0,	      0,          1,   	      0,	 -1 },
-	{ "st",  	 NULL,       NULL,        0,	      0,          1,   	      0,	 -1 },
+	// { "st",  	 NULL,       NULL,        0,	      0,          1,   	      0,	 -1 },
 	{ "URxvt",  	 NULL,       NULL,        0,	      0,          1,   	      0,	 -1 },
 	{ "Alacritty",   NULL,       NULL,        0,	      0,          1,   	      0,	 -1 },
-	{ "floating",   NULL,       NULL,        0,	      1,          0,   	      1,	 -1 },
+	{ "floating",    NULL,       NULL,        0,	      1,          0,   	      1,	 -1 },
 };
 
 static const char *dmenucmd[] = { "dmenu_run", "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
-static const char *termcmd[]  = { "st" , NULL };
+static const char *termcmd[]  = { TERMINAL , NULL };
 
-static const char *ncmpcpp[] = { "st", "-e", "ncmpcpp", NULL };
+static const char *ncmpcpp[] = { TERMINAL, "-e", "tmux", "a", "-t", "ncmpcpp", NULL };
 
 static const Key keys[] = {
 	/* modifier                     key        			function        argument */
-	{ MODKEY,                       XK_n,    		spawn,	SHCMD("st -c \"floating\" -g=\"120x30+500+500\" -e mplay") },
+	{ MODKEY,                       XK_n,    			spawn,		SHCMD("st -c \"floating\" -g=\"120x30+500+500\" -e mplay") },
+	// { MODKEY,                       XK_n,    			spawn,		SHCMD("mplay") },
+	// { MODKEY,                       XK_n,    			spawn,		SHCMD("alacritty --class \"floating\" -o 'window.dimensions = { columns = 120, lines = 30 }' -e mplay") },
 	{ MODKEY,                       XK_bracketright,    		nextoccupied,	{ .i = +1 } },
 	{ MODKEY,                       XK_bracketleft,    		nextoccupied,	{ .i = -1 } },
 	{ MODKEY|ShiftMask,             XK_m,     			zoom,           {0} },
 	{ MODKEY,             		XK_v,     			musictag 	},
-	{ MODKEY,             		XK_c,     			spawn, 	   	SHCMD("st -e ranger") },
+	{ MODKEY,             		XK_c,     			spawn, 	   	SHCMD(TERMINAL " -e ranger") },
 	{ MODKEY,                       XK_e,     			spawn, 	   	SHCMD("emacs") },
 	{ 0,				XK_Print, 			spawn, 	   	SHCMD("flameshot gui") },
-	{ 0,				XF86XK_AudioLowerVolume,   	spawn, 		SHCMD("mpc volume -5") },
-	{ 0,				XF86XK_AudioRaiseVolume,   	spawn, 		SHCMD("mpc volume +5") },
+	// { 0,				XF86XK_AudioLowerVolume,   	spawn, 		SHCMD("mpc volume -5") },
+	// { 0,				XF86XK_AudioRaiseVolume,   	spawn, 		SHCMD("mpc volume +5") },
+	{ 0,				XF86XK_AudioMute,   	spawn, 		SHCMD("amixer set PCM toggle") },
+	{ 0,				XF86XK_AudioLowerVolume,   	spawn, 		SHCMD("amixer set PCM 5%-") },
+	{ 0,				XF86XK_AudioRaiseVolume,   	spawn, 		SHCMD("amixer set PCM 5%+") },
 	{ 0,				XF86XK_AudioPlay, 		spawn,   	SHCMD("mpc toggle") },
 	{ 0, 				XF86XK_AudioNext, 		spawn,   	SHCMD("mpc next") },
 	{ 0, 				XF86XK_AudioPrev, 		spawn,   	SHCMD("mpc prev") },
@@ -112,7 +121,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_period, 			focusmon,       {.i = +1 } },
 	{ MODKEY,                       XK_Tab,    			tagswapmon	},
 	{ MODKEY|ShiftMask,             XK_comma,  			tagmon,         {.i = -1 } },
-  { MODKEY|ShiftMask,             XK_period, 			tagmon,         {.i = +1 } },
+  	{ MODKEY|ShiftMask,             XK_period, 			tagmon,         {.i = +1 } },
 	TAGKEYS(                        XK_1,      			                0)
 	TAGKEYS(                        XK_2,      			                1)
 	TAGKEYS(                        XK_3,      			                2)
@@ -129,17 +138,11 @@ static const Key keys[] = {
 /* click can be ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle, ClkClientWin, or ClkRootWin */
 static Button buttons[] = {
 	/* click                event mask      button          function        argument */
-	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
-	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
-	{ ClkWinTitle,          0,              Button2,        zoom,           {0} },
-	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd } },
 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
 	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
 	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
 	{ ClkTagBar,            0,              Button1,        view,           {0} },
-	{ ClkTagBar,            0,              Button3,        toggleview,     {0} },
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
-	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 };
 
 

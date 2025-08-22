@@ -2500,16 +2500,18 @@ zoom(const Arg *arg)
 void
 musictag(void)
 {
-  	view( &(Arg) { .ui = 1 << 6 } );
+	view( &(Arg) { .ui = 1 << 6 } );
 
-	if (system("pidof -x ncmpcpp > /dev/null") != 0)
-		spawn( &(Arg) { .v = ncmpcpp } );
+	if (system("pidof -x ncmpcpp > /dev/null") == 0)
+		return;
+
+	spawn( &(Arg) { .v = ncmpcpp } );
 }
 
 unsigned int
 l2(int pow)
 {
-  unsigned int exp;
+	unsigned int exp;
 
 	for (exp = 0; pow >>= 1; exp++);
 
@@ -2520,56 +2522,56 @@ void
 tagswapmon(void)
 {
 	if (!mons->next)
-	    	return;
+		return;
 
-	view( &(Arg) { .ui = 1 << l2( selmon == mons
-                              ? mons->next->tagset[mons->next->seltags]
-                              : mons->tagset[mons->seltags] )
-		}
-	);
+	view( &(Arg) { .ui = 1 << l2( selmon == mons ? mons->next->tagset[mons->next->seltags] : mons->tagset[mons->seltags] ) } );
 }
 
 int subA(int a, int b)
 {
-    	return a - b;
+	return a - b;
 }
 
 int subB(int a, int b)
 {
-    	return b - a;
+	return b - a;
+}
+
+int
+closesttag(int curr, int i)
+{
+	Client *c;
+	unsigned int diff = 256, c_tag, d;
+	int next = curr;
+
+	int (*sub) (int, int) = i == -1 ? subB : subA;
+
+	for (c = cl->clients; c != NULL; c = c->next) {
+		c_tag = c->tags;
+
+	  if (c_tag == curr)
+			continue;
+
+		d = sub(c_tag, curr);
+
+		if (d < diff) {
+			next = c_tag;
+			diff = d;
+		}
+	}
+
+	return next == curr ? closesttag(i == -1 ? 257 : 0, i) : next;
 }
 
 void
 nextoccupied(const Arg *arg)
 {
-	unsigned int curr = selmon->tagset[selmon->seltags];
+	int curr = selmon->tagset[selmon->seltags];
 
-	if (cl->clients == NULL
-	|| (curr == 1 && arg->i == -1)
-	|| (curr == 256 && arg->i == +1))
-	    return;
+	if (cl->clients == NULL)
+		return;
 
-	Client *c;
-	unsigned int diff = 256, c_tag, next = curr, d;
-
-	int (*sub)(int, int) = arg->i == -1 ? subB : subA;
-
-	for (c = cl->clients; c != NULL; c = c->next) {
-		c_tag = c->tags;
-
-	    	if (c_tag == curr)
-		    	continue;
-
-		d = sub(c_tag, curr); 
-
-		if (d < diff) {
-        		next = c_tag;
-			diff = d;
-		}
-	}
-
-	if (next == curr)
-    		return;
+	int next = closesttag(curr, arg->i);
 
 	view( &(Arg) { .ui = 1 << l2(next) });
 }
